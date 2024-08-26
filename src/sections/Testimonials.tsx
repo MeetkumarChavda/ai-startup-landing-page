@@ -62,7 +62,7 @@ export const Testimonials = () => {
             </div>
 
           ))}
-        </div>add .
+        </div>
       </div>
     </div>
     
