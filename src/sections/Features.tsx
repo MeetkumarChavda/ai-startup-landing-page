@@ -1,7 +1,7 @@
 "use client"
 import { DotLottieCommonPlayer, DotLottiePlayer } from "@dotlottie/react-player";
 import productImage from "@/assets/product-image.png";
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef, ComponentPropsWithoutRef } from "react";
 import { animate, motion, useMotionTemplate, useMotionValue, ValueAnimationTransition } from "framer-motion";
 
 const tabs = [
@@ -30,8 +30,8 @@ const tabs = [
     backgroundSizeX: 177,
   },
 ];
-const FeatureTab = (tab: typeof tabs[number])=>{
-
+const FeatureTab = (props: typeof tabs[number] & ComponentPropsWithoutRef<'div'> & { selected: boolean})=>{
+  const tabRef = useRef<HTMLDivElement>(null);
   const dotLottieRef = useRef<DotLottieCommonPlayer>(null);
 
   const xPercentage = useMotionValue(0);
@@ -40,7 +40,15 @@ const FeatureTab = (tab: typeof tabs[number])=>{
   const maskImageVar = useMotionTemplate`radial-gradient(80px 80px at ${xPercentage}% ${yPercentage}%, black, transparent)`;
 
   useEffect(()=>{
+    if (!tabRef.current || !props.selected ) return;
+    xPercentage.set(0);
+    yPercentage.set(0);
+    const {height, width } = tabRef.current?.getBoundingClientRect();
+    const circumference = height * 2 + width * 2;
+
+    const times = [0, width/circumference, (width+ height) / circumference,(width * 2 + height) /circumference,  1]
     const options:ValueAnimationTransition = {
+      times,
       duration:4,
       repeat:Infinity,
       ease:'linear',
@@ -48,7 +56,7 @@ const FeatureTab = (tab: typeof tabs[number])=>{
     }
     animate(xPercentage,[0, 100, 100, 0, 0],options);
     animate(yPercentage , [0, 0, 100, 100, 0],options);
-  }, []);
+  }, [props.selected]);
 
   const handleTabHover = () => {
     if(dotLottieRef.current === null) return;
@@ -57,24 +65,28 @@ const FeatureTab = (tab: typeof tabs[number])=>{
   }
 
   return(
-      <div 
+      <div
+      ref={tabRef}
       onMouseEnter = {handleTabHover}
+      onClick={props.onClick}
       className=" relative border border-white/15 rounded-xl flex lg:flex-1 items-center p-2.5 gap-2.5 ">
-        <motion.div 
+        {props.selected &&
+          <motion.div 
           style = {{
             maskImage:maskImageVar
           }}
           className="absolute -m-px rounded-xl inset-0 border border-[#A369FF] "></motion.div>
+        }
         <div className="h-12 w-12 border rounded-lg border-white/15 inline-flex items-center justify-center">
           <DotLottiePlayer
             ref = {dotLottieRef} 
-            src={tab.icon} 
+            src={props.icon} 
             className="h-5 w-5"
             autoplay
           />
         </div>
-        <div>{tab.title}</div>
-        {tab.isNew && 
+        <div>{props.title}</div>
+        {props.isNew && 
           <div className="text-xs rounded-full px-2 py-0.5 bg-[#8c44ff] text-black font-semibold">
             new
           </div>
@@ -84,6 +96,7 @@ const FeatureTab = (tab: typeof tabs[number])=>{
 }
 
 export const Features = () => {
+  const [selectedTab , setSelectedTab] = useState(0);
   return (
   <section className='py-20 md:py-24'>
     <div className="container">
@@ -94,8 +107,10 @@ export const Features = () => {
       </p>
       <div className="mt-10 flex flex-col lg:flex-row  gap-3">
         {// We used lottie files
-          tabs.map(tab=>(
-            <FeatureTab {...tab} key={tab.title} />
+          tabs.map((tab, tabIndex)=>(
+            <FeatureTab  {...tab} onClick={()=>setSelectedTab(tabIndex)}
+            selected = {selectedTab === tabIndex}
+            key={tab.title} />
           ))}
         </div>
         <div className="border border-white/20 p-2.5 rounded-xl mt-3">
