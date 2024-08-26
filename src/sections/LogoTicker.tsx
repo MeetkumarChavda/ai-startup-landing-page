@@ -6,7 +6,6 @@ import quantumLogo from '@/assets/logo-quantum.png';
 import pulseLogo from '@/assets/logo-pulse.png';
 import echoLogo from '@/assets/logo-echo.png';
 import { motion } from 'framer-motion';
-import exp from 'constants';
 export const LogoTicker = () => {
   return (
     <section className='py-20 md:py-24'>
@@ -37,9 +36,9 @@ export const LogoTicker = () => {
                 echoLogo,
                 celestialLogo,
                 apexLogo,
-                quantumLogo
-              ].map((logo)=>(
-                <img src={logo.src} key={logo.src} className='h-6 w-auto'/>
+                quantumLogo,
+              ].map((logo, index) => (
+                <img src={logo.src} key={`${logo.src}-${index}`} className='h-6 w-auto'/>
               ))}
             </motion.div>
           </div>
