@@ -7,7 +7,7 @@ import { useRef } from "react";
 export const Hero = () => {
 
   const sectionRef = useRef(null);
-  
+
   const { scrollYProgress } = useScroll({
     target:sectionRef,
     offset:['start end','end start']
@@ -71,7 +71,7 @@ export const Hero = () => {
         style={{translateX:'-50%',translateY:'-50%'}}
         animate={{rotate:'1turn'}}
         transition={{repeat:Infinity,duration:90,ease:'linear'}}
-      className="absolute h-[544px] w-[544px] md:h-[980px] md:w-[980px] rounded-full opacity-20 border border-dashed border-white top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        className="absolute h-[544px] w-[544px] md:h-[980px] md:w-[980px] rounded-full opacity-20 border border-dashed border-white top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         <div className="absolute h-2 w-2 left-0 bg-white rounded-full top-1/2 -translate-x-1/2 -translate-y-1/2"></div>
         <div className="absolute h-2 w-2 left-full bg-white rounded-full top-1/2 -translate-x-1/2 -translate-y-1/2"></div>
       </motion.div>
