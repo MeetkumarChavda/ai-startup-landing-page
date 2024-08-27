@@ -69,7 +69,7 @@ const FeatureTab = (props: typeof tabs[number] & ComponentPropsWithoutRef<'div'>
       ref={tabRef}
       onMouseEnter = {handleTabHover}
       onClick={props.onClick}
-      className=" relative border border-white/15 rounded-xl flex lg:flex-1 items-center p-2.5 gap-2.5 ">
+      className=" relative cursor-pointer border border-white/15 rounded-xl flex lg:flex-1 items-center p-2.5 gap-2.5 ">
         {props.selected &&
           <motion.div 
           style = {{
@@ -97,6 +97,35 @@ const FeatureTab = (props: typeof tabs[number] & ComponentPropsWithoutRef<'div'>
 
 export const Features = () => {
   const [selectedTab , setSelectedTab] = useState(0);
+  const backgroundPositionX = useMotionValue(tabs[0].backgroundPositionX);
+  const backgroundPositionY = useMotionValue(tabs[0].backgroundPositionY);
+  const backgroundSizeX = useMotionValue(tabs[0].backgroundSizeX);
+
+  const backgroundPosition =  useMotionTemplate`${backgroundPositionX}% ${backgroundPositionY}%`;
+  const backgroundSize = useMotionTemplate`${backgroundSizeX}% auto`;
+
+  const handleSelectTab = (index: number) =>{
+    setSelectedTab(index)
+
+    const animateOptions: ValueAnimationTransition = {
+      duration:2,
+      ease:'easeInOut',
+    }
+
+    animate(
+      backgroundSizeX,
+      [backgroundSizeX.get(), 100, tabs[index].backgroundSizeX],
+      animateOptions,);
+    animate(
+      backgroundPositionX,
+      [backgroundPositionX.get(), 100, tabs[index].backgroundPositionX],
+      animateOptions,);
+    animate(
+      backgroundPositionY,
+      [backgroundPositionY.get(), 100, tabs[index].backgroundPositionY],
+      animateOptions,);
+  }
+
   return (
   <section className='py-20 md:py-24'>
     <div className="container">
@@ -108,16 +137,19 @@ export const Features = () => {
       <div className="mt-10 flex flex-col lg:flex-row  gap-3">
         {// We used lottie files
           tabs.map((tab, tabIndex)=>(
-            <FeatureTab  {...tab} onClick={()=>setSelectedTab(tabIndex)}
+            <FeatureTab  {...tab} onClick={()=>handleSelectTab(tabIndex)}
             selected = {selectedTab === tabIndex}
             key={tab.title} />
           ))}
         </div>
         <div className="border border-white/20 p-2.5 rounded-xl mt-3">
-          <div className="aspect-video bg-cover border border-white/20 rounded-lg" style={{
-            backgroundImage:`url(${productImage.src})`
+          <motion.div className="aspect-video bg-cover border border-white/20 rounded-lg" 
+            style={{
+              backgroundSize,
+              backgroundPosition,
+              backgroundImage:`url(${productImage.src})`
             }}>
-          </div>
+          </motion.div>
         </div>
     </div>
   </section>
