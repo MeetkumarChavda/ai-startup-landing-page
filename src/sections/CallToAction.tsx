@@ -1,14 +1,37 @@
+'use client'
 import { Button } from "@/components/Button";
 import starsBg from "@/assets/stars.png";
 import gridLines from "@/assets/grid-lines.png";
+import { motion , useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 
 export const CallToAction = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const {scrollYProgress} = useScroll({
+    target:sectionRef,
+    offset:['start end','end start'],
+  });
+
+  const backgroundPositionY = useTransform(scrollYProgress, [0,1], [-300,300]);
+
   return (
-  <section className="py-20 md:py-24">
+  <section ref = {sectionRef} className="py-20 md:py-24" >
     <div className="container">
-      <div className="relative border border-white/15 py-24 rounded-xl overflow-hidden" style={{
-        backgroundImage:`url(${starsBg.src})`
-      }}>
+      <motion.div 
+        className="relative border border-white/15 py-24 rounded-xl overflow-hidden" 
+        animate={{
+          backgroundPositionX:starsBg.width,
+        }}
+        transition={{
+          duration:40,
+          ease:'linear',
+          repeat:Infinity,
+        }}
+        style={{
+          backgroundPositionY,
+          backgroundImage:`url(${starsBg.src})`
+        }}>
         <div className="absolute inset-0 bg-[rgb(74,32,138)] bg-blend-overlay [mask-image:radial-gradient(50%_50%_at_50%_35%,black,transparent)]" style={{
           backgroundImage:`url(${gridLines.src})`
         }}></div>
@@ -19,7 +42,7 @@ export const CallToAction = () => {
             <Button>Join waitlist</Button>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   </section>
 );
